@@ -56,6 +56,7 @@
   template:
     dest: /etc/apache2/sites-available/nc_{{ nextcloud_trusted_domain }}.conf
     src: templates/apache_nc.j2
+  notify: start apache
 
 - name: "[APACHE] -  Enable Nextcloud site in apache conf"
   file:
