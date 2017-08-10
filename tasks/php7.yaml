@@ -1,0 +1,15 @@
+---
+# PHP 7 repo
+# see https://www.digitalocean.com/community/tutorials/how-to-upgrade-to-php-7-on-ubuntu-14-04)
+- name: Add language pack base
+  apt: name=language-pack-en-base
+- name: PHP repository
+  apt_repository: state=present repo=ppa:ondrej/php
+  environment:
+    LC_ALL: en_US.UTF-8
+
+# Install
+- name: Install PHP7
+  apt: name=php7.0 update_cache=yes
+
+

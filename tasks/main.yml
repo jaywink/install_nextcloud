@@ -1,5 +1,9 @@
 ---
 # tasks file for nextcloud
+
+- name: Install PHP7
+  include: tasks/php7.yaml
+
 - include: tasks/setup_env.yml
   tags: always
   # load os specific variables
