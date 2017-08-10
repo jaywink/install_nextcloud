@@ -2,8 +2,8 @@
 - name: Nextcloud user
   user: name="{{ nextcloud_os_user }}" state=present
 - name: Ensure www-data member of Nextcloud user group
-  user: name={{ websrv_user }} append=yes groups="{{ nextcloud_os_user }}" state=present
+  user: name={{ nextcloud_websrv_user }} append=yes groups="{{ nextcloud_os_user }}" state=present
 - name: Ensure Nextcloud member of www-data user group
-  user: name={{ nextcloud_os_user }} append=yes groups="{{ websrv_user }}" state=present
+  user: name={{ nextcloud_os_user }} append=yes groups="{{ nextcloud_websrv_user }}" state=present
 - name: Make Nextcloud user home non-world readable
   file: path=/home/{{ nextcloud_os_user }} mode=0750 state=directory
