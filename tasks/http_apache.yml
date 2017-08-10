@@ -14,7 +14,7 @@
     - "php{{ php_ver }}-mcrypt"
   notify: start apache
 
-- name: "[APACHE] -  Some other pakages are installed."
+- name: "[APACHE] -  Some other packages are installed."
   package: "name={{ item }} state=present"
   with_items: "{{ php_pkg_spe }}"
 
@@ -24,17 +24,18 @@
 
 - block:
   # load APCu from backports as the default version for trusty is obsolete.
-  - name: "[APACHE] -  Configure trusty backport."
+  - name: "[APACHE] -  Configure trusty backports."
     apt_repository:
       repo: "deb http://fr.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse"
       state: present
       update_cache: yes
+    ignore_errors: yes # fix for travis ci
   - name: "[APACHE] -  Install APCu from backports."
     apt: "name={{ php_pkg_apcu }} state=latest default_release=trusty-backports"
   when: ansible_distribution_release == "trusty"
 
 - name: "[APACHE] -  enable APC for php CLI"
-  lineinfile: 
+  lineinfile:
     dest: "{{ php_dir }}/cli/php.ini"
     line: "apc.enable_cli = 1"
     insertbefore: "^; End:$"
@@ -54,16 +55,13 @@
 
 - name: "[APACHE] -  generate Nextcloud configuration for apache"
   template:
-    dest: /etc/apache2/sites-available/nc_{{ nextcloud_trusted_domain }}.conf
-    src: templates/apache_nc.j2
-  notify: start apache
+    dest: /etc/apache2/sites-available/nc_{{ nextcloud_instance_name }}.conf
+    src: "{{nextcloud_websrv_template}}"
+  notify: reload apache
 
 - name: "[APACHE] -  Enable Nextcloud site in apache conf"
   file:
-    path: /etc/apache2/sites-enabled/nc_{{ nextcloud_trusted_domain }}.conf
-    src: /etc/apache2/sites-available/nc_{{ nextcloud_trusted_domain }}.conf
+    path: /etc/apache2/sites-enabled/nc_{{ nextcloud_instance_name }}.conf
+    src: /etc/apache2/sites-available/nc_{{ nextcloud_instance_name }}.conf
     state: link
-    # validate: "/usr/sbin/nginx -t #%s"
-  notify: restart apache
-
-
+  notify: reload apache
